@@ -11,8 +11,8 @@ from dialogues import DIALOGUES
 pygame.init()
 
 # Настройки окна
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 609
+SCREEN_WIDTH = 960
+SCREEN_HEIGHT = 640
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("RPG Novella INBO-22-23")
 
@@ -21,7 +21,7 @@ font = pygame.font.Font(None, 36)
 
 # Функция для загрузки уровня
 def load_level(level_name):
-    location = Location("image/location/level1.tmx")
+    location = Location("image/location/0_1.tmx")
     collidables = location.get_collidable_objects()
     interactables = location.get_interactable_objects()
     return location, collidables, interactables
@@ -79,7 +79,7 @@ while running:
             if event.key == pygame.K_LSHIFT and not dialogue.active and not inventory.active:  # Атака
                 player.dash()  # Запускаем атаку
             if event.key == pygame.K_0 and not dialogue.active and not inventory.active:  # Атака
-                player.take_damage(20)  # Запускаем атаку    
+                player.take_damage(23)  # Запускаем атаку    
             if dialogue.active:
                 if event.key == pygame.K_RETURN:
                     dialogue.next()
