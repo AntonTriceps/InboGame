@@ -1,0 +1,152 @@
+{
+    "dialogues": {
+      "npc_dialogue_1": {
+        "start": {
+          "npc_text": "Привет, путник! Это Дымная Лощина. Зачем пришёл?",
+          "player_options": [
+            {
+              "text": "Ищу приключений.",
+              "next_node_id": "adventure_seeker"
+            },
+            {
+              "text": "Что за место?",
+              "next_node_id": "place_name"
+            },
+            {
+              "text": "Не твое дело.",
+              "next_node_id": "rude_exit"
+            }
+          ]
+        },
+        "adventure_seeker": {
+          "npc_text": "Приключений? В лесу зверь лютует. Сразишь его?",
+          "player_options": [
+            {
+              "text": "Да, я готов!",
+              "next_node_id": "quest_accept"
+            },
+            {
+              "text": "Нет, пас.",
+              "next_node_id": "quest_decline"
+            },
+            {
+              "text": "Что за зверь?",
+              "next_node_id": "beast_question"
+            }
+          ]
+        },
+        "place_name": {
+          "npc_text": "Дымная Лощина — старое имя. Дым от лесных пожаров.",
+          "player_options": [
+            {
+              "text": "Есть тайны?",
+              "next_node_id": "secrets"
+            },
+            {
+              "text": "Что делать тут?",
+              "next_node_id": "adventure_seeker"
+            },
+            {
+              "text": "Понял, пока!",
+              "next_node_id": "end"
+            }
+          ]
+        },
+        "rude_exit": {
+          "npc_text": "Грубый, да? Иди, но берегись теней!",
+          "player_options": [
+            {
+              "text": "Ладно, давай заново.",
+              "next_node_id": "start"
+            },
+            {
+              "text": "Сам разберусь.",
+              "next_node_id": "end"
+            }
+          ]
+        },
+        "quest_accept": {
+          "npc_text": "Храбрец! Иди к дубу на севере. Принеси клык.",
+          "player_options": [
+            {
+              "text": "Сделаю!",
+              "next_node_id": "end"
+            },
+            {
+              "text": "А награда?",
+              "next_node_id": "reward_question"
+            }
+          ]
+        },
+        "quest_decline": {
+          "npc_text": "Трус? Сиди в таверне тогда!",
+          "player_options": [
+            {
+              "text": "Передумал, расскажи.",
+              "next_node_id": "adventure_seeker"
+            },
+            {
+              "text": "До встречи.",
+              "next_node_id": "end"
+            }
+          ]
+        },
+        "beast_question": {
+          "npc_text": "Огромный, с глазами-углями. Опасный.",
+          "player_options": [
+            {
+              "text": "Справлюсь!",
+              "next_node_id": "quest_accept"
+            },
+            {
+              "text": "Нет, спасибо.",
+              "next_node_id": "end"
+            }
+          ]
+        },
+        "secrets": {
+          "npc_text": "Пещера за водопадом. Клад там, говорят.",
+          "player_options": [
+            {
+              "text": "Пойду искать!",
+              "next_node_id": "cave_quest"
+            },
+            {
+              "text": "Что ещё?",
+              "next_node_id": "adventure_seeker"
+            },
+            {
+              "text": "Неинтересно.",
+              "next_node_id": "end"
+            }
+          ]
+        },
+        "cave_quest": {
+          "npc_text": "Иди к реке, вход за водопадом. Удачи!",
+          "player_options": [
+            {
+              "text": "Спасибо!",
+              "next_node_id": "end"
+            }
+          ]
+        },
+        "reward_question": {
+          "npc_text": "Монеты и карта. Хватит?",
+          "player_options": [
+            {
+              "text": "Да, берусь!",
+              "next_node_id": "end"
+            },
+            {
+              "text": "Мало, пока.",
+              "next_node_id": "end"
+            }
+          ]
+        },
+        "end": {
+          "npc_text": "Береги себя, путник!",
+          "player_options": []
+        }
+      }
+    }
+  }
