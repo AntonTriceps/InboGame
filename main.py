@@ -2,6 +2,7 @@
 import pygame
 import pytmx
 import sys
+from utils.Inventory import Inventory
 
 # Импорт класса Player, NPC из utils
 try:
@@ -51,6 +52,11 @@ except Exception as e:
 npc_spawn_x = level_map.width // 2 - 24  # Adjust 24 if NPC scaled width is different
 npc_spawn_y = level_map.height // 2 - 32 # Adjust 32 if NPC scaled height is different
 
+# Настройки инвентаря
+inventory = Inventory()
+# Добавим тестовый предмет для проверки
+inventory.add_item("Меч")
+
 # Создание экземпляра игрока
 player = Player(100, 100, level_map.width, level_map.height)
 
@@ -70,6 +76,8 @@ while running:
         # Обработка ввода NPC (для диалогов)
         npc_level1.handle_input(event)
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_i:  # Открытие инвентаря
+                inventory.toggle()
             if event.key == pygame.K_e: # Кнопка взаимодействия 'E'
                 if npc_level1.is_close_to_player(player.rect):
                     npc_level1.start_dialogue()
@@ -105,13 +113,17 @@ while running:
         player.update()
     npc_level1.update() # Обновление NPC - delta_time argument removed
 
+    
     # Отрисовка
     screen.fill((0, 0, 0))  # Черный фон
     level_map.render(screen)  # Отрисовка карты
     npc_level1.draw(screen) # Отрисовка NPC
     player.draw(screen)      # Отрисовка игрока поверх карты
     npc_level1.draw_dialogue_ui(screen) # Отрисовка интерфейса диалога NPC
+    inventory.draw(screen)  # Отрисовка инвентаря (ПЕРЕД flip)
     pygame.display.flip()  # Обновление экрана
+
+    
 
     clock.tick(60) # delta_time calculation removed from main.py
 
