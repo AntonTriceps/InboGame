@@ -47,6 +47,31 @@ class Player:
         self.speed = 5
         self.moving = False
 
+        # Характеристики игрока
+        self.health = 100  # Здоровье
+        self.max_health = 100
+        #self.attack_damage = 10  # Урон от атаки
+
+        # Загрузка и разделение спрайт-листа HP-бара //////////////
+        self.hp_bar_sheet = pygame.image.load("data/image/UI/hp_bar.png").convert_alpha()
+        self.hp_frame_count = 5  # 5 кадров в спрайт-листе
+        self.hp_frame_height = self.hp_bar_sheet.get_height() // self.hp_frame_count  # Вертикальное расположение
+        self.hp_frame_width = self.hp_bar_sheet.get_width()
+        self.hp_frames = []
+    
+        # Масштабируем HP-бар (увеличиваем размер, например, ширина 200 пикселей)
+        hp_bar_scaled_width = 230  # Увеличили с 100 до 200
+        hp_bar_scaled_height = int(self.hp_frame_height * (hp_bar_scaled_width / self.hp_frame_width))  # Пропорционально
+    
+        for i in range(self.hp_frame_count):
+            frame = self.hp_bar_sheet.subsurface((0, i * self.hp_frame_height, self.hp_frame_width, self.hp_frame_height))
+            scaled_frame = pygame.transform.scale(frame, (hp_bar_scaled_width, hp_bar_scaled_height))
+            self.hp_frames.append(scaled_frame)
+    
+        # Фиксированная позиция HP-бара (слева сверху)
+        self.hp_bar_x = 20  # Отступ от левого края
+        self.hp_bar_y = 20  # Отступ от верхнего края
+
         # Параметры рывка
         self.dashing = False  # Флаг рывка
         self.dash_speed = 5*3  # Скорость рывка (в n*5 раза быстрее обычной)
@@ -167,6 +192,13 @@ class Player:
 
     def draw(self, surface):
         current_sprite = self.frames[self.direction][self.current_frame]
+
+        # Отрисовка HP-бара (фиксированная позиция)
+        health_percent = self.health / self.max_health  # Процент оставшегося здоровья
+        frame_index = max(0, min(self.hp_frame_count - 1, int((1 - health_percent) * self.hp_frame_count)))  # Выбираем кадр
+        hp_bar_sprite = self.hp_frames[frame_index]
+        surface.blit(hp_bar_sprite, (self.hp_bar_x, self.hp_bar_y))  # Фиксированные координаты
+
         if self.dashing:
            for i in range(4):  # Четыре следа
             trail_sprite = current_sprite.copy()

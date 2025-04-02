@@ -113,7 +113,6 @@ while running:
         player.update()
     npc_level1.update() # Обновление NPC - delta_time argument removed
 
-    
     # Отрисовка
     screen.fill((0, 0, 0))  # Черный фон
     level_map.render(screen)  # Отрисовка карты
@@ -121,6 +120,14 @@ while running:
     player.draw(screen)      # Отрисовка игрока поверх карты
     npc_level1.draw_dialogue_ui(screen) # Отрисовка интерфейса диалога NPC
     inventory.draw(screen)  # Отрисовка инвентаря (ПЕРЕД flip)
+    ## Сюда ставить следующие отрисовки иначе не будут поверх персонажа
+    # 
+    ## Отрисовка HP-бара из класса Player
+    health_percent = player.health / player.max_health
+    frame_index = max(0, min(player.hp_frame_count - 1, int((1 - health_percent) * player.hp_frame_count)))
+    hp_bar_sprite = player.hp_frames[frame_index]
+    screen.blit(hp_bar_sprite, (player.hp_bar_x, player.hp_bar_y))
+        
     pygame.display.flip()  # Обновление экрана
 
     
