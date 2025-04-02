@@ -3,6 +3,7 @@ import pygame
 import pytmx
 import sys
 from utils.Inventory import Inventory
+from utils.Item import Item
 
 # Импорт класса Player, NPC из utils
 try:
@@ -54,11 +55,11 @@ npc_spawn_y = level_map.height // 2 - 32 # Adjust 32 if NPC scaled height is dif
 
 # Настройки инвентаря
 inventory = Inventory()
-# Добавим тестовый предмет для проверки
-inventory.add_item("Меч")
+# Добавляем тестовый предмет "Меч" с его спрайтом
+inventory.add_item(Item("Меч", "data/image/Items/sword sprite.png"))
 
 # Создание экземпляра игрока
-player = Player(100, 100, level_map.width, level_map.height)
+player = Player(100, 100, level_map.width, level_map.height, inventory=inventory)
 
 # Создание экземпляра NPC для level1.tmx, спавн в центре карты
 npc_level1 = NPC(npc_spawn_x, npc_spawn_y, level_map.width, level_map.height)
@@ -78,6 +79,8 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_i:  # Открытие инвентаря
                 inventory.toggle()
+            if event.key == pygame.K_SPACE and not inventory.active:  # Атака // dash dobavit potom
+                player.attack()  # Запускаем атаку
             if event.key == pygame.K_e: # Кнопка взаимодействия 'E'
                 if npc_level1.is_close_to_player(player.rect):
                     npc_level1.start_dialogue()

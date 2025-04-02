@@ -2,7 +2,7 @@
 import pygame
 
 class Player:
-    def __init__(self, x, y, map_width, map_height):
+    def __init__(self, x, y, map_width, map_height, inventory=None):
         # Загрузка спрайта
         self.sprite_path = "data/image/Player/PlayerMain_sprites.png"
         try:
@@ -50,7 +50,14 @@ class Player:
         # Характеристики игрока
         self.health = 100  # Здоровье
         self.max_health = 100
-        #self.attack_damage = 10  # Урон от атаки
+        
+        # Параметры атаки
+        self.attacking = False
+        self.attack_timer = 0
+        self.attack_duration = 15  # Длительность атаки в кадрах (0.25 сек при 60 FPS)
+        self.attack_cooldown = 0
+        self.attack_cooldown_time = 30  # Перезарядка атаки (0.5 сек при 60 FPS)
+        self.inventory = inventory  # Ссылка на инвентарь для доступа к мечу
 
         # Загрузка и разделение спрайт-листа HP-бара //////////////
         self.hp_bar_sheet = pygame.image.load("data/image/UI/hp_bar.png").convert_alpha()
@@ -110,6 +117,8 @@ class Player:
             
             if (keys[pygame.K_LSHIFT]) and not self.dashing and self.dash_delay <= 0:
                 self.dash()
+            if keys[pygame.K_SPACE] and self.attack_cooldown <= 0:  # Атака по пробелу
+                self.attack()
 
             # Движение по вертикали (Стрелки и WASD)
             if keys[pygame.K_UP] or keys[pygame.K_w]:
@@ -142,6 +151,12 @@ class Player:
             self.current_frame = 0
             self.image = self.frames[self.direction][self.current_frame]
 
+        # Обновление атаки
+        if self.attacking:
+            self.attack_timer -= 1
+            if self.attack_timer <= 0:
+                self.attacking = False
+
         #Обновление рывка
         if self.dashing:
             self.dash_timer -= 1
@@ -173,7 +188,8 @@ class Player:
             if self.dash_cooldown <= 0 and self.dash_count < self.max_dash_count:
                 # Восстанавливаем все рывки после перезарядки
                 self.dash_count = self.max_dash_count
-        
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1  # Перенесли сюда
 
     def dash(self):
         # Рывок возможен, если есть доступные рывки и нет текущего рывка
@@ -189,6 +205,15 @@ class Player:
             self.dash_start_y = self.rect.y
             return True
         return False
+
+    def attack(self):
+        if not self.attacking and self.attack_cooldown <= 0 and self.inventory and self.inventory.items:
+            self.attacking = True
+            self.attack_timer = self.attack_duration
+            self.attack_cooldown = self.attack_cooldown_time
+            return True
+        return False
+
 
     def draw(self, surface):
         current_sprite = self.frames[self.direction][self.current_frame]
@@ -228,6 +253,22 @@ class Player:
             surface.blit(dash_sprite, dash_rect)
         else:
             surface.blit(current_sprite, self.rect)
+
+        # Отрисовка атаки мечом (отдельно от рывка)
+        if self.attacking and self.inventory and self.inventory.items:
+            sword = self.inventory.items[0]
+            sword_sprite = sword.sprite
+            sword_offset = 40
+            if self.direction == "up":
+                sword_pos = (self.rect.centerx - sword_sprite.get_width() // 2, self.rect.top - sword_offset)
+            elif self.direction == "down":
+                sword_pos = (self.rect.centerx - sword_sprite.get_width() // 2, self.rect.bottom + sword_offset - sword_sprite.get_height())
+            elif self.direction == "left":
+                sword_pos = (self.rect.left - sword_offset, self.rect.centery - sword_sprite.get_height() // 2)
+            elif self.direction == "right":
+                sword_pos = (self.rect.right + sword_offset - sword_sprite.get_width(), self.rect.centery - sword_sprite.get_height() // 2)
+            surface.blit(sword_sprite, sword_pos)
+
 
     def set_direction(self, direction):
         """Установить направление игрока."""
