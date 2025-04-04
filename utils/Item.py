@@ -16,7 +16,7 @@ class Item:
             self.sprite.fill((255, 0, 0))
             
 
-    def draw(self, surface, x, y, scale_factor = 2):
+    def draw(self, surface, x, y, scale_factor = 1.5):
         """Отрисовка спрайта предмета на указанных координатах."""
         scaled_sprite = pygame.transform.scale(
             self.sprite,

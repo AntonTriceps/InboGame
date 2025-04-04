@@ -211,6 +211,9 @@ class Player:
             self.attacking = True
             self.attack_timer = self.attack_duration
             self.attack_cooldown = self.attack_cooldown_time
+            # Начальный и конечный угол для анимации взмаха (в градусах)
+            self.start_angle = 60  # Начальный угол (сверху)
+            self.end_angle = -60  # Конечный угол (снизу)
             return True
         return False
 
@@ -254,21 +257,39 @@ class Player:
         else:
             surface.blit(current_sprite, self.rect)
 
-        # Отрисовка атаки мечом (отдельно от рывка)
+        # Отрисовка атаки мечом с анимацией взмаха
         if self.attacking and self.inventory and self.inventory.items:
             sword = self.inventory.items[0]
             sword_sprite = sword.sprite
+            sword_scale = 2.0  # Коэффициент увеличения
+            scaled_sword = pygame.transform.scale(
+                sword_sprite,
+                (int(sword_sprite.get_width() * sword_scale), int(sword_sprite.get_height() * sword_scale))
+            )
+
+            # Вычисление прогресса анимации (от 1 до 0)
+            attack_progress = self.attack_timer / self.attack_duration
+            # Интерполяция угла от начального к конечному
+            current_angle = self.start_angle + (self.end_angle - self.start_angle) * (1 - attack_progress)
+
+            # Поворот спрайта меча
+            rotated_sword = pygame.transform.rotate(scaled_sword, current_angle)
+            sword_rect = rotated_sword.get_rect()
+
+            # Позиционирование меча относительно игрока
             sword_offset = 40
             if self.direction == "up":
-                sword_pos = (self.rect.centerx - sword_sprite.get_width() // 2, self.rect.top - sword_offset)
+                sword_pos = (self.rect.centerx - sword_rect.width // 2, self.rect.top - sword_offset)
             elif self.direction == "down":
-                sword_pos = (self.rect.centerx - sword_sprite.get_width() // 2, self.rect.bottom + sword_offset - sword_sprite.get_height())
+                sword_pos = (self.rect.centerx - sword_rect.width // 2, self.rect.bottom + sword_offset - sword_rect.height)
             elif self.direction == "left":
-                sword_pos = (self.rect.left - sword_offset, self.rect.centery - sword_sprite.get_height() // 2)
+                sword_pos = (self.rect.left - sword_offset, self.rect.centery - sword_rect.height // 2)
             elif self.direction == "right":
-                sword_pos = (self.rect.right + sword_offset - sword_sprite.get_width(), self.rect.centery - sword_sprite.get_height() // 2)
-            surface.blit(sword_sprite, sword_pos)
+                sword_pos = (self.rect.right + sword_offset - sword_rect.width, self.rect.centery - sword_rect.height // 2)
 
+            # Корректировка позиции для учета поворота
+            sword_rect.topleft = sword_pos
+            surface.blit(rotated_sword, sword_rect)
 
     def set_direction(self, direction):
         """Установить направление игрока."""
